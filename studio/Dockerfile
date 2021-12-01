@@ -9,10 +9,10 @@
 
 FROM node:14 as base
 WORKDIR /usr/src/app
-# Do `npm install` separately so we can cache `node_modules`
+# Do `npm ci` separately so we can cache `node_modules`
 # https://nodejs.org/en/docs/guides/nodejs-docker-webapp/
 COPY package*.json ./
-RUN npm install
+RUN npm clean-install
 COPY . .
 
 FROM base as dev
