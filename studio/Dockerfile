@@ -9,21 +9,17 @@
 
 FROM node:14 as base
 WORKDIR /usr/src/app
+# Do `npm install` separately so we can cache `node_modules`
+# https://nodejs.org/en/docs/guides/nodejs-docker-webapp/
 COPY package*.json ./
-
-FROM base as build
-ENV NODE_ENV=build
 RUN npm install
 COPY . .
-RUN npm run build
 
-FROM build as dev
-ENV NODE_ENV=dev
+FROM base as dev
 EXPOSE 8082
-CMD [ "npm", "run", "dev" ]
+CMD ["npm", "run", "dev"]
 
-FROM build as production
-ENV NODE_ENV=production
-COPY . .
+FROM base as production
+RUN npm run build
 EXPOSE 3000
-CMD ["npm", "start"]
+CMD ["npm", "run", "start"]
